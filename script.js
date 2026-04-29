@@ -52,49 +52,38 @@ sword.repair();
 
 
 
-// Функция-конструктор Item
-function ItemConstructor(name, weight, rarity) {
+// Item
+function Item(name, weight, rarity) {
     this.name = name;
     this.weight = weight;
     this.rarity = rarity;
-
-    this.getInfo = function() {
-        return `Предмет: ${this.name}, Вес: ${this.weight}, Редкость: ${this.rarity}`;
-    };
 }
 
-// Функция-конструктор Weapon
-function WeaponConstructor(name, weight, rarity, damage, durability) {
-    // Вызываем конструктор Item для текущего объекта (this)
-    ItemConstructor.call(this, name, weight, rarity);
-    
-    this.damage = damage;
-    this.durability = durability;
-
-    this.use = function() {
-        if (this.durability > 0) this.durability -= 10;
-    };
-}
-
-//ДЕМОНСТРАЦИЯ 
-
-const inventory = {
-    activeWeapon: new WeaponConstructor("Лук", 1.5, "rare", 20, 100),
-    utility: null // Предмета нет
+Item.prototype.getInfo = function() {
+    return `Предмет: ${this.name}`;
 };
 
-// Используем опциональную цепочку ?.
-// Если utility равно null, программа не выдаст ошибку, а просто ничего не выведет
-console.log("Инфо о предмете:", inventory.utility?.getInfo?.()); 
+// Weapon
+function Weapon(name, weight, rarity, damage, durability) {
+    Item.call(this, name, weight, rarity);
 
-// А здесь всё сработает
-console.log("Инфо об оружии:", inventory.activeWeapon?.getInfo?.());
+    this.damage = damage;
+    this.durability = durability;
+}
 
+// наследование
+Weapon.prototype = Object.create(Item.prototype);
 
+// методы
+Weapon.prototype.use = function() {
+    this.durability -= 10;
+};
 
+const sword = new Weapon("Меч", 5, "rare", 50, 100);
+const empty = null;
 
-
-
+console.log(sword?.getInfo?.()); // работает
+console.log(empty?.getInfo?.()); // не ломается
 
 
 
